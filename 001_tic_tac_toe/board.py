@@ -14,6 +14,12 @@ class Board():
         self.allowed = allowed
         self.clearAll()
 
+    def getWidth(self):
+        return self.width
+
+    def getHeight(self):
+        return self.height
+
     def isWithinBounds(self, x, y):
         '''Check if given coordinates are within bounds'''
         assert isinstance(x, int) and isinstance(y, int), "Coordinates should be integers"
@@ -22,6 +28,15 @@ class Board():
     def isAllowed(self, v):
         '''Check if given value is allowed on the board'''
         return not self.allowed or v in self.allowed
+
+    def getRows(self):
+        '''Return horisontal rows of board data'''
+        return (self.data[i:i + self.width] for i in range(0, len(self.data), self.width))
+
+    def getColumns(self):
+        '''Return vertical rows of board data'''
+        rows = list(self.getRows())
+        return (list(c) for c in zip(*rows[::1])) #Rotate list
 
     def getData(self):
         '''Return raw board data'''
@@ -55,3 +70,7 @@ class Board():
     def clearAll(self):
         '''Clear entire board'''
         self.data = [self.clearval] * self.width * self.height
+
+    def filled(self):
+        '''True if no clear coordinates on board'''
+        return not self.clearval in self.data

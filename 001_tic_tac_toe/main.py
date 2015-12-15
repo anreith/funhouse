@@ -1,19 +1,11 @@
 #!/usr/bin/python3 -u
 
-from itertools import chain
+from itertools import chain, groupby, cycle
+from board import Board
 
-board = [[None,None,None],
-         [None,None,None],
-         [None,None,None]]
-
-def printboard():
-    for y in board:
-        for x in y:
-            print(x or '_', end="")
-        print("")
-
-def free(x,y):
-    return board[y][x] == None
+def printboard(gameboard):
+    for row in gameboard.getRows():
+        print("".join(row))
 
 def getcoords(minx, miny, maxx, maxy):
     x,y = tuple(int(x.strip()) for x in input().split(','))
@@ -23,52 +15,45 @@ def getcoords(minx, miny, maxx, maxy):
 
     return x,y
 
-def checkDraw():
-    return all(chain.from_iterable(board))
-
-def checkWinner():
-    for y in board:
-        if y == ['x','x','x'] or y == ['o','o','o']:
+def checkWinner(gameboard, inarow, clearval):
+    for row in gameboard.getRows():
+        if next((v for v,n in groupby(row) if v != clearval and len(list(n)) >= inarow), None):
             return True
 
-    #Rotated, ie check vertical
-    for y in zip(*board[::-1]):
-        if y == ['x','x','x'] or y == ['o','o','o']:
+    for col in gameboard.getColumns():
+        if next((v for v,n in groupby(col) if v != clearval and len(list(n)) >= inarow), None):
             return True
-
-    if board[0][0] and board[0][0] == board[1][1] and board[1][1] == board[2][2]:
-        return True
-
-    if board[2][0] and board[2][0] == board[1][1] and board[1][1] == board[0][2]:
-        return True
 
     return False
 
-def round(current):
-    printboard()
-    print("'{}' turn. Choose coordinates (0,0)-(2,2):".format(current))
-    minx, miny, maxx, maxy = 0, 0, 2, 2
+def round(current, gameboard):
+    printboard(gameboard)
+    print("'{}' turn. Choose coordinates 'x,y':".format(current))
+    minx, miny, maxx, maxy = 0, 0, gameboard.getWidth(), gameboard.getHeight()
     x,y = getcoords(minx, miny, maxx, maxy)
-    while not free(x,y):
-        print("Square is taken, please choose free coordinates:")
-        printboard()
+    while not gameboard.isClear(x,y):
+        print("Square is taken, please choose free coordinates 'x,y':")
+        printboard(gameboard)
         x,y = getcoords(minx, miny, maxx, maxy)
 
-    board[y][x] = current
+    gameboard.set(x,y,current)
 
 def main():
-  current = 'o'
-  gameover = False
-  while not gameover:
-    current = 'x' if current == 'o' else 'o'
-    round(current)
-    gameover = checkWinner() or checkDraw()
+  players = "xo"
+  turns = cycle(players)
+  gameboard = Board(3, 3, players, clearval=' ')
 
-  printboard()
-  if checkWinner():
-     print("Winner is: {}".format(current))
-  else:
-     print("Draw")
+  while True:
+      player = next(turns)
+      round(player, gameboard)
+
+      if checkWinner(gameboard, 3, clearval=' '):
+          print("Winner is: {}".format(player))
+          break;
+
+      if gameboard.filled():
+          print("Draw")
+          break;
 
 if __name__ == "__main__":
     main()
