@@ -1,3 +1,19 @@
+from itertools import groupby
+
+__doc__ = '''File contains board abstraction class and helper functions'''
+
+def in_a_row(gameboard, inarow):
+    '''Get all values with number of elements in a row'''
+    retval = []
+    clearval = gameboard.clearVal()
+    for row in gameboard.getRows():
+        retval.extend([v for v,n in groupby(row) if v != clearval and len(list(n)) >= inarow])
+
+    for col in gameboard.getColumns():
+        retval.extend([v for v,n in groupby(col) if v != clearval and len(list(n)) >= inarow])
+
+    return retval
+
 class Board():
     '''The Board class represents a simple game board with width and height
        The methods allow the getting and setting of values from/to the board
@@ -71,6 +87,16 @@ class Board():
         '''Clear entire board'''
         self.data = [self.clearval] * self.width * self.height
 
+    def clearVal(self):
+        '''Return clear value'''
+        return self.clearval
+
     def filled(self):
         '''True if no clear coordinates on board'''
         return not self.clearval in self.data
+
+    def print(gameboard):
+        '''Basic print of gameboard'''
+        for row in gameboard.getRows():
+            print("".join(row))
+
