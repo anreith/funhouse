@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 from itertools import groupby
+
+THRESHOLD_BLACK = 50
 
 def loadAsGreyScale(imgfile):
   '''Load image and convert to greyscale'''
   image = Image.open(imgfile)
+  image = ImageOps.invert(image)
   image.convert('LA')
   return image
 
@@ -22,8 +25,7 @@ def getLines(image):
 
 def isBlankLine(line):
   '''Return true if line is blank'''
-  val = sum([v for v,_,_ in line])
-  return val == 0
+  return all(v < THRESHOLD_BLACK for v,_,_ in line)
 
 def getNonBlankBlocks(image):
   '''Enumerate/clump lines and return non-blank blocks'''
@@ -36,7 +38,7 @@ def getNonBlankBlocks(image):
   return blocks
 
 def lineStart(line):
-  return next((i for i in range(0,len(line)) if line[i][0] != 0), len(line))
+  return next((i for i in range(0,len(line)) if line[i][0] > THRESHOLD_BLACK), len(line))
 
 def lineStop(line):
   return len(line) - lineStart(list(reversed(line)))
@@ -65,7 +67,7 @@ def saveAsRGB(image, filename):
   image.convert('RGB')
   image.save(filename)
 
-im = loadAsGreyScale("../gfx/receipt/kvittotest03.png")
+im = loadAsGreyScale("../gfx/receipt/kvittotest04.png")
 
 blocks = getNonBlankBlocks(im)
 
