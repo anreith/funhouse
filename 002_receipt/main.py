@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import argparse
 from PIL import Image, ImageDraw, ImageOps
 from itertools import groupby
 
@@ -63,20 +64,36 @@ def drawRects(image, rects):
   for rect in rects:
     draw.rectangle(rect, outline=(255,0,0))
 
+def saveRects(image, rects, basename, filetype):
+  for nr,rect in enumerate(rects):
+    rectimage = image.crop(rect)
+    filename = "{}_{}.{}".format(basename, nr, filetype)
+    saveAsRGB(rectimage, filename)
+
 def saveAsRGB(image, filename):
   image.convert('RGB')
   image.save(filename)
 
-im = loadAsGreyScale("../gfx/receipt/kvittotest04.png")
+def run(args):
+  im = loadAsGreyScale(args.imgfile)
+  blocks = getNonBlankBlocks(im)
+  rects = [blockToRectangle(block) for block in blocks]
+  print(rects)
 
-blocks = getNonBlankBlocks(im)
+  im2 = im.copy()
+  drawRects(im2, rects)
+#  saveAsRGB(im2, "out.tiff")
+  basename = args.imgfile.split(".")[0]
+  saveRects(im, rects, basename, "tiff")
 
-rects = [blockToRectangle(block) for block in blocks]
-print(rects)
+  im.show()
+  im2.show()
 
-im2 = im.copy()
-drawRects(im2, rects)
-saveAsRGB(im2, "out.png")
+def parseArgs():
+  parser = argparse.ArgumentParser()
+  parser.add_argument('imgfile', help="Image file")
+  args = parser.parse_args()
+  return args
 
-im.show()
-im2.show()
+if __name__ == "__main__":
+  run(parseArgs())
