@@ -3,6 +3,8 @@
 import argparse
 from PIL import Image, ImageDraw, ImageOps
 from itertools import groupby
+from os.path import basename
+import pytesseract
 
 THRESHOLD_BLACK = 50
 
@@ -70,6 +72,14 @@ def saveRects(image, rects, basename, filetype):
     filename = "{}_{}.{}".format(basename, nr, filetype)
     saveAsRGB(rectimage, filename)
 
+def printRects(image, rects):
+  for nr,rect in enumerate(rects):
+    rectimage = image.crop(rect)
+    str = pytesseract.image_to_string(rectimage)
+    str.replace('\n', ' ')
+    str.replace('\r', ' ')
+    print("{}: '{}'".format(nr, str))
+
 def saveAsRGB(image, filename):
   image.convert('RGB')
   image.save(filename)
@@ -83,8 +93,9 @@ def run(args):
   im2 = im.copy()
   drawRects(im2, rects)
 #  saveAsRGB(im2, "out.tiff")
-  basename = args.imgfile.split(".")[0]
-  saveRects(im, rects, basename, "tiff")
+  base = basename(args.imgfile)
+  saveRects(im, rects, base, "tiff")
+  printRects(im, rects)
 
   im.show()
   im2.show()
