@@ -1,0 +1,28 @@
+{
+	"animations":
+	[
+		{"name":"tile_dirt", "gfx":"res/gfx/dirt.gif", "offset":[0,0], "frames":1 },
+		{"name":"tile_grass", "gfx":"res/gfx/grass.png", "offset":[0,0], "frames":1 },
+		{"name":"ufo", "gfx":"res/gfx/ufo.png", "offset":[32,10], "frames":1 },
+		{"name":"ore_small", "gfx":"res/gfx/ore_small.png", "offset":[8,8], "frames":1 },
+		{"name":"ore_medium", "gfx":"res/gfx/ore_medium.png", "offset":[12,12], "frames":1 },
+		{"name":"ore_large", "gfx":"res/gfx/ore_large.png", "offset":[16,16], "frames":1 },
+		{"name":"laser_updown", "gfx":"res/gfx/laser.png", "offset":[12,25], "frames":10, "duration":1.0, "paused":false}  
+	],
+	"prototypes":
+	[
+		"res/nmy/ufo.json",
+		"res/frn/suncatcher.json",
+		"res/frn/node.json",
+		"res/frn/laser.json",
+		"res/frn/base.json",
+		"res/ore/small.json",
+		"res/ore/medium.json",
+		"res/ore/large.json",
+		"res/frn/miner.json"
+	],
+	"levels":
+	[
+		"res/lvl/01.json"
+	]
+}

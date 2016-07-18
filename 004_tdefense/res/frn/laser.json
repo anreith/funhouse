@@ -1,0 +1,15 @@
+{
+ 	"type": "laser",
+ 	"hp": 10,
+ 	"radius" : 70,
+ 	"color" : [0,255,0],
+ 	"scaninterval" : 1.0,
+ 	"attackradius" : 100,
+ 	"energyoutput" : 10,
+	"cost" : 20,
+	"animations":
+	[
+		"laser_updown"
+	]
+}
+ 

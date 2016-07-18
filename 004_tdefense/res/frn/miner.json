@@ -1,0 +1,12 @@
+{
+ 	"type": "miner",
+ 	"hp": 10,
+ 	"radius" : 70,
+ 	"color" : [255,0,255],
+ 	"dumpinterval" : 5.0,
+ 	"mineradius" : 70,
+ 	"energyoutput" : 2,
+	"conversionrate" : 0.5,
+	"cost" : 20,
+  	"animations": []
+}

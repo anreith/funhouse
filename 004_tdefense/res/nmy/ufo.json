@@ -1,0 +1,12 @@
+{
+ 	"type": "UFO",
+ 	"hp": 10,
+	"color" : [255,0,255],
+	"speed": 10,
+	"attackradius": 40,
+	"animations":
+	[
+		"ufo"
+	]
+}
+ 

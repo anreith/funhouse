@@ -1,0 +1,9 @@
+{
+ 	"type": "ore_small",
+ 	"hp": 20,
+	"color" : [0,255,255],
+	"animations":
+	[
+		"ore_small"
+	]
+}

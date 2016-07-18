@@ -1,0 +1,9 @@
+{
+ 	"type": "node",
+  	"hp": 10,
+ 	"radius" : 70,
+	"color" : [255,255,255],
+	"cost" : 5,
+  	"animations": []
+}
+ 

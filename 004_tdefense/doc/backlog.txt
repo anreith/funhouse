@@ -1,0 +1,43 @@
+Todo:
+
+* Make UFO try to destroy the base
+	When UFO is within firing distance of base, it stops and fires at the target
+		UFO firing distance and strength is a property of the UFO properties file
+	UFO fire should register as damage on the target 
+		UFO fire is a constant beam of x color light
+* Make game realise that the level is lost if the base dies
+	If the base is destroyed, the game is lost
+* Assert instance type in addEnemy/Tower functions in World
+* Go through all functions and see what faults can be asserted against
+* Complete graphics for all components
+* Add tests ;)
+* Start creating level editor
+* Idea: Indicate incoming enemies by red area on screen circumfence
+
+* Make animation for ore depleting, crystal falls apart. Change removal of object in world to after animation finishes playing 
+
+* Add ore cost for each tower
+	* Not possible to build tower if exceeding current ore in cost 
+
+* Create logger with logOnce, log and logDebug
+	* logOnce only prints the same string once
+
+Done:
+
+* Make UFO spawn randomly around the base, move towards the base:
+	UFO spawn, movement and targeting:
+		UFO spawns regularely at random spawn radius from base.
+			The spawn regularity is a property of the level properties file
+			The spawn radius is a property of the level properties file
+		At spawning, UFO targets the player base
+		UFO moves towards base at constant speed (pretty slow)
+			UFO moving speed is a property of the UFO properties file 
+* Make singletons out of world and factories
+* Create a baseclass for both towers and enemies
+* Make tiles into animations and load into ResHandler through res.json
+* Fix so that update freq corresponds to real time, look into pygame functionality
+* Create miner tower that can mine resources
+* Create resource ore to harvest for building material
+	* Resources locations and amounts listed in level file
+	* Displayed as graphics in the world
+			

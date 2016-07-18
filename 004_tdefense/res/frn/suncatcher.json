@@ -1,0 +1,11 @@
+ {
+ 	"type": "suncatcher",
+  	"hp": 10,
+ 	"radius" : 70,
+	"color" : [255,255,0],
+	"energyinterval" : 2,
+	"energyspeed": 50,
+	"cost" : 20,
+	"animations": []
+ }
+ 
