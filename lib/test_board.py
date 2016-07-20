@@ -13,12 +13,12 @@ NR_RANDOM_TESTS = 1000
 
 class BoardTestCase(unittest.TestCase):
     def setUp(self):
-        self.board = Board(WIDTH, HEIGHT, ALLOWED, CLEARVAL)
+        self.board = Board(dim=(WIDTH, HEIGHT), allowed=ALLOWED, clearval=CLEARVAL)
         random.seed()
 
     def testBoardInit(self):
-        assert len(self.board.getData()) == WIDTH * HEIGHT
-        assert not any(self.board.getData())
+        assert len(self.board) == WIDTH * HEIGHT
+        assert not any(self.board)
 
     def randomCoords(self):
         return (random.randint(0,WIDTH-1), random.randint(0,HEIGHT-1))
@@ -40,8 +40,8 @@ class BoardTestCase(unittest.TestCase):
         for i in range(NR_RANDOM_TESTS):
             x,y = self.randomCoords()
             v = self.randomValue()
-            self.board.set(x,y,v)
-            assert self.board.get(x,y) == v
+            self.board.setValue(x,y,v)
+            assert self.board.getValue(x,y) == v
 
     def testIsAllowed(self):
         for a in ALLOWED:
@@ -52,18 +52,18 @@ class BoardTestCase(unittest.TestCase):
 
     def testClear(self):
         assert self.board.isClear(5,5)
-        self.board.set(5,5,ALLOWED[0])
+        self.board.setValue(5,5,ALLOWED[0])
         assert not self.board.isClear(5,5)
         self.board.clear(5,5)
         assert self.board.isClear(5,5)
 
         for x in range(WIDTH):
             for y in range(HEIGHT):
-                self.board.set(x,y,ALLOWED[0])
+                self.board.setValue(x,y,ALLOWED[0])
 
-        assert all(self.board.getData())
+        assert all(self.board)
         self.board.clearAll()
-        assert not any(self.board.getData())
+        assert not any(self.board)
         
 if __name__ == "__main__":
     unittest.main()

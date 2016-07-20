@@ -16,7 +16,7 @@ __doc__ = '''This program lets p number of players play an m,n,k game.
           '''
 
 def play(width, height, inarow, players):
-    gameboard = Board(width, height, players, clearval=' ')
+    gameboard = Board((width, height), allowed=players, clearval=' ')
     turns = cycle(players)
 
     while True:
@@ -27,14 +27,14 @@ def play(width, height, inarow, players):
             print("Square is taken, please choose free coordinates 'x,y':")
             x,y = get_tuple_int(0, 0, width, height)
 
-        gameboard.set(x,y,player)
+        gameboard.setValue(x,y,player)
         gameboard.print()
 
         if in_a_row(gameboard, inarow):
             print("Winner is: {}".format(player))
             break;
 
-        if gameboard.filled():
+        if gameboard.isFilled():
             print("Draw")
             break;
 

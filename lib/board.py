@@ -1,4 +1,4 @@
-from itertools import groupby
+from itertools import groupby, product
 
 __doc__ = '''File contains board abstraction class and helper functions'''
 
@@ -17,29 +17,36 @@ def in_a_row(gameboard, inarow):
 class Board():
     '''The Board class represents a simple game board with width and height
        The methods allow the getting and setting of values from/to the board
-       Bounds checking is not performed.
     '''
 
-    def __init__(self, width, height, allowed=[], clearval=None):
+    def __init__(self, dim, allowed=[], clearval=None, data=None):
         '''Initialize a board with width, height, allowed values and clear value
            Also clears the board
         '''
-        self.width = width
-        self.height = height
+        self.w, self.h = dim
         self.clearval = clearval
         self.allowed = allowed
-        self.clearAll()
+        if data:
+            assert len(data) == len(self), "Dimension/Data mismatch"
+            self.data = data
+        else:
+            self.clearAll()
 
-    def getWidth(self):
-        return self.width
+    def size(self):
+        '''Return size of gameboard as tuple'''
+        return self.w, self.h
 
-    def getHeight(self):
-        return self.height
+    def __len__(self):
+        '''Return number of game board spaces'''
+        return self.w * self.h
+
+    def __iter__(self):
+        '''Iterate through board data'''
+        return iter(self.data)
 
     def isWithinBounds(self, x, y):
         '''Check if given coordinates are within bounds'''
-        assert isinstance(x, int) and isinstance(y, int), "Coordinates should be integers"
-        return x >= 0 and x < self.width and y >= 0 and y < self.height
+        return x >= 0 and x < self.w and y >= 0 and y < self.h
 
     def isAllowed(self, v):
         '''Check if given value is allowed on the board'''
@@ -47,56 +54,53 @@ class Board():
 
     def getRows(self):
         '''Return horisontal rows of board data'''
-        return (self.data[i:i + self.width] for i in range(0, len(self.data), self.width))
+        return (self.data[i:i + self.w] for i in range(0, len(self), self.w))
 
     def getColumns(self):
         '''Return vertical rows of board data'''
         rows = list(self.getRows())
         return (list(c) for c in zip(*rows[::1])) #Rotate list
 
-    def getData(self):
-        '''Return raw board data'''
-        return self.data[:]
+    def getCoordData(self):
+        '''Get data prefixed with coordinates'''
+        return zip(product(range(0, self.w), range(0, self.h)), iter(self))
 
-    def get(self, x, y):
+    def getValue(self, x, y):
         '''Get board value from coordinates'''
         assert self.isWithinBounds(x,y), "Coordinates need to be bound-checked"
-        return self.data[y * self.width + x]
+        return self.data[y * self.w + x]
 
-    def set(self, x, y, v):
+    def setValue(self, x, y, v):
         '''Set board value on coordinates'''
         assert self.isWithinBounds(x,y), "Coordinates need to be bound-checked"
-        if self.isAllowed(v):
-            self.data[y * self.width + x] = v
-            return True
-
-        return False
+        assert self.isAllowed(v), "Value not allowed"
+        self.data[y * self.w + x] = v
 
     def isClear(self, x, y):
         '''Check if board coordinate is cleared'''
         assert self.isWithinBounds(x,y), "Coordinates need to be bound-checked"
-        return self.get(x,y) == self.clearval
+        return self.getValue(x,y) == self.clearval
         
     def clear(self, x, y):
         '''Clear board coordinates'''
         assert self.isWithinBounds(x,y), "Coordinates need to be bound-checked"
-        self.data[y * self.width + x] = self.clearval
+        self.data[y * self.w + x] = self.clearval
         return True
 
-    def clearAll(self):
+    def clearAll(self, clearval=None):
         '''Clear entire board'''
-        self.data = [self.clearval] * self.width * self.height
+        clearval = clearval or self.clearval
+        self.data = [clearval] * len(self)
 
-    def clearVal(self):
+    def getClearVal(self):
         '''Return clear value'''
         return self.clearval
 
-    def filled(self):
+    def isFilled(self):
         '''True if no clear coordinates on board'''
         return not self.clearval in self.data
 
     def print(gameboard):
-        '''Basic print of gameboard'''
+        '''Naive print of gameboard'''
         for row in gameboard.getRows():
             print("".join(row))
-
