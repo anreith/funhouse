@@ -4,10 +4,14 @@ Created on Mar 30, 2014
 @author: anreith
 '''
 
-import random
-import math
-import pygame
+
 import json
+import math
+import os
+import random
+import sys
+import pygame
+
 import enemyWaveController
 import resHandler
 import tile
@@ -19,65 +23,45 @@ class World:
         self.__dict__ = self.__shared_state
 
     def loadLevel(self, levelFile):
-        self.width = 0
-        self.height = 0
         self.tilemap = []
         self.tileset = []
         self.towertype = "none"
         self.levelFile = levelFile
 
-        print "Loading level from %s" % (self.levelFile)
+        print("Loading level from '{}'".format(self.levelFile))
 
         with open(self.levelFile) as f:
             self.data = json.load(f)
 
-        self.width = self.data["mapwidth"]
-        self.height = self.data["mapheight"]
-        self.twidth = self.data["tilewidth"]
-        self.theight = self.data["tileheight"]
+        self.mapdim = (self.data["mapdim"]["w"], self.data["mapdim"]["h"])
+        self.tiledim = (self.data["tiledim"]["w"], self.data["tiledim"]["h"])
+        self.startPoint = (self.data["start"]["x"] * self.tiledim[0], self.data["start"]["y"] * self.tiledim[1])
         self.ore = self.data["startore"]
-
-        self.tiles = []
-        self.enemies = []
-        self.towers = []
-        self.oredeposits = []
-
-        self.__loadTiles()
-        self.__loadOreDeposits()
-        self.__loadTowers()
-        self.__loadEnemies()
-
-    def __loadTiles(self):
-        tileset = self.data["tileset"]
-        tilemap = self.data["tilemap"]
-        
-        for y in range(self.height):
-            for x in range(self.width):
-                tileValue = tilemap[y*self.width + x]
-                self.tiles.append(tile.Tile(tileset[tileValue], [x*self.twidth, y*self.theight]))
-
-    def __loadEnemies(self):
-        #Add enemy wave controller
         self.enemyWaveController = enemyWaveController.EnemyWaveController(self.data["enemywaves"])
-        
-    def __loadTowers(self):
-        #Add towers from levelfile, override need to be connected
-        for tdata in self.data["towers"]:
-            self.addTower(resHandler.ResHandler().clone(tdata["type"], tdata["pos"]), False)
+        self.towers = list(map(resHandler.ResHandler().clone, self.data["towers"]))
 
-    def __loadOreDeposits(self):
-        for odata in self.data["oredeposits"]:
-            self.addOreDeposit(resHandler.ResHandler().clone(odata["type"], odata["pos"]))
+    def getTiles(self):
+        return iter(self.data["tilemap"])
 
-    #Add a tower, optionally refusing to add if not connected to existing tower
-    def addTower(self, tower, requireConnect=True):
-        nrConnections = tower.connect()
-        if requireConnect and nrConnections == 0:
-            print "Tower needs to connect to existing tower"
-        else:
-            self.towers.append(tower)
-            tower.onSpawn()
-            print self, "Added", tower.getType(), "tower at", tower.getPos()
+    def getWidth(self):
+        return self.data["mapdim"]["w"]
+
+    def getHeight(self):
+        return self.data["mapdim"]["h"]
+
+    def getWaypoints(self):
+        return iter(self.data["waypoints"])
+
+    def getStartX(self):
+        return self.data["startpoint"]["x"]
+
+    def getStartY(self):
+        return self.data["startpoint"]["y"]
+
+    def addTower(self, tower):
+        self.towers.append(tower)
+        tower.onSpawn()
+        print("{} Added {} tower at {}".format(self, tower.getType(), tower.getPos()))
             
     def addEnemy(self, enemy):
         self.enemies.append(enemy)
@@ -89,7 +73,7 @@ class World:
 
     def addOre(self, amount):
         self.ore += amount
-        print "ore:", self.ore
+        print("ore: {}".format(self.ore))
 
     def getTowers(self):
         return self.towers[:]
@@ -151,25 +135,25 @@ class World:
     def handleEvent(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                print "Escape pressed, quitting"
+                print("Escape pressed, quitting")
                 return False
             elif event.key == pygame.K_r:
-                print "reloading '%s'" % self.levelFile
+                print("reloading '{}'".format(self.levelFile))
                 self.loadLevel(self.levelFile)
             elif event.key == pygame.K_0:
-                print "tower type none"
+                print("tower type none")
                 self.towertype = "none"
             elif event.key == pygame.K_1:
-                print "tower type node"
+                print("tower type node")
                 self.towertype = "node"
             elif event.key == pygame.K_2:
-                print "tower type suncatcher"
+                print("tower type suncatcher")
                 self.towertype = "suncatcher"
             elif event.key == pygame.K_3:
-                print "tower type laser"
+                print("tower type laser")
                 self.towertype = "laser"
             elif event.key == pygame.K_4:
-                print "tower type miner"
+                print("tower type miner")
                 self.towertype = "miner"
                 
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -178,10 +162,10 @@ class World:
             if pygame.mouse.get_pressed() == (True, False, False) and self.towertype != "none":
                 t = resHandler.ResHandler().clone(self.towertype, list(mpos))
                 if t.getCost() > self.ore:
-                    print "Not enough ore to build", t.getType(), "cost:", t.getCost(), "ore:", self.ore 
+                    print("Not enough ore to build", t.getType(), "cost:", t.getCost(), "ore:", self.ore)
                 else:
                     self.ore -= t.getCost()
-                    print "Building", t.getType(), "cost:", t.getCost(), "ore remaining:", self.ore 
+                    print("Building", t.getType(), "cost:", t.getCost(), "ore remaining:", self.ore)
                     self.addTower(t)
 
             #Debug functionality: Create enemy at mouse position with base as target

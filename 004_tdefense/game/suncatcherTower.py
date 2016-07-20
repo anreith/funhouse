@@ -4,6 +4,9 @@ Created on Apr 10, 2014
 @author: anreith
 '''
 
+import os
+import sys
+
 import tower
 
 class SuncatcherTower(tower.Tower):

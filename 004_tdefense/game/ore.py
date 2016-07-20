@@ -4,12 +4,15 @@ Created on Apr 6, 2014
 @author: anreith
 '''
 
-import pygame
-import engine.gameObject
+import sys
+import os
 
-class Ore(engine.gameObject.GameObject):
+import pygame
+import gameObject
+
+class Ore(gameObject.GameObject):
     def __init__(self, data):
-        engine.gameObject.GameObject.__init__(self, data)
+        gameObject.GameObject.__init__(self, data)
 
     def clone(self):
         o = Ore(self.data)

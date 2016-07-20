@@ -4,12 +4,17 @@ Created on Mar 30, 2014
 @author: anreith
 '''
 
+import os
 import sys
 import pygame
 
-from engine import world
-from engine import resHandler
-#import engine.resHandler
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/engine")
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/game")
+
+print(sys.path)
+
+import world
+import resHandler
 
 levelFile = "res/lvl/01.json"
 
@@ -24,7 +29,7 @@ framerate = 60
 #Load all resources
 resHandler.ResHandler().loadResources("res/res.json")
 
-print "Loading level '%s'" % levelFile
+print("Loading level '{}'".format(levelFile))
 world.World().loadLevel(resHandler.ResHandler().getNextLevel())
 
 clock = pygame.time.Clock()
@@ -43,7 +48,7 @@ while runGame:
 
     totalTime += mSec
     if(totalTime > 5000):
-        print clock.get_fps()
+        print(clock.get_fps())
         totalTime %= 5000 
 
 #    screen.fill((0,0,0))

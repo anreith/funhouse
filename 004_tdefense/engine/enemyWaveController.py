@@ -62,7 +62,7 @@ class EnemyWaveController(object):
         self.startWave(self.waveNr)
 
     def startWave(self, waveNr):
-        print self, "starting wave", waveNr
+        print(self, "starting wave", waveNr)
         self.currentWave = EnemyWave(self.data[self.waveNr])
 
     def update(self, mSec):

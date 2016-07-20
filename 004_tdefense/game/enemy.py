@@ -4,14 +4,17 @@ Created on Apr 6, 2014
 @author: anreith
 '''
 
+import sys
+import os
+
 import math
 import pygame
 import operator
-import engine.gameObject
+import gameObject
 
-class Enemy(engine.gameObject.GameObject):
+class Enemy(gameObject.GameObject):
     def __init__(self, data):
-        engine.gameObject.GameObject.__init__(self, data)
+        gameObject.GameObject.__init__(self, data)
         self.speed = data["speed"]
         self.attackRadius = data["attackradius"]
         self.target = None
@@ -28,11 +31,11 @@ class Enemy(engine.gameObject.GameObject):
     def setTarget(self, target):
         self.target = target
         self.targetDistance =  self.target.getDistance(self)
-        delta = map(operator.sub, self.getPos(), target.pos)
+        delta = list(map(operator.sub, self.getPos(), target.pos))
         self.angle = math.atan2(delta[1], delta[0])
 
     def update(self, mSec):
-        engine.gameObject.GameObject.update(self, mSec)
+        gameObject.GameObject.update(self, mSec)
         if self.targetDistance > self.attackRadius:
             self.targetDistance -= self.speed * mSec / 1000.0
             xpos = self.target.getPos()[0] + (math.cos(self.angle) * self.targetDistance)

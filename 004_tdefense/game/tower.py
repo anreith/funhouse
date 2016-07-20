@@ -8,8 +8,13 @@ import math
 import pygame
 import random
 import operator
-import engine.gameObject
-import engine.world
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/engine")
+
+import gameObject
+import world
 
 class Energy():
     def __init__(self, src, dst, size, speed):
@@ -20,7 +25,7 @@ class Energy():
         self.distanceTraveled = 0.0
         self.distanceTarget = src.getDistance(dst)
         self.speed = speed
-        delta = map(operator.sub, dst.getPos(), src.getPos())
+        delta = list(map(operator.sub, dst.getPos(), src.getPos()))
         self.angle = math.atan2(delta[1], delta[0])
         #print delta, self.angle, self.speed
 
@@ -73,9 +78,9 @@ class Connection():
             e.draw(surface)
 
 
-class Tower(engine.gameObject.GameObject):
+class Tower(gameObject.GameObject):
     def __init__(self, data):
-        engine.gameObject.GameObject.__init__(self, data)
+        gameObject.GameObject.__init__(self, data)
         self.radius = data["radius"]
         self.cost = data["cost"]
         self.connections = []
@@ -89,7 +94,7 @@ class Tower(engine.gameObject.GameObject):
     #Default policy is to relay energy to another tower
     def addEnergy(self, src, size, speed):
         if len(self.connections) == 0:
-            print "Energy wasted at", self
+            print("Energy wasted at", self)
         elif len(self.connections) == 1:
             self.connections[0].addEnergy(size, speed)
         #Choose a connection that is not connected to source
@@ -99,7 +104,7 @@ class Tower(engine.gameObject.GameObject):
 
     #Connect to other towers, return number of connections
     def connect(self):
-        for other in engine.world.World().getTowers():
+        for other in world.World().getTowers():
             if other.inRadius(self):
                 self.addConnection(other)
                 other.addConnection(self)
@@ -118,7 +123,7 @@ class Tower(engine.gameObject.GameObject):
         return self.getDistance(other) < max(self.radius, other.getRadius())
 
     def update(self, mSec):
-        engine.gameObject.GameObject.update(self, mSec)
+        gameObject.GameObject.update(self, mSec)
         for c in self.connections:
             c.update(mSec)
 

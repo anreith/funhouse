@@ -5,7 +5,7 @@ Created on Apr 19, 2014
 '''
 
 import tower
-import engine.world
+import world
 import pygame
 import random
 
@@ -51,16 +51,16 @@ class MiningTower(tower.Tower):
 
         if self.timeAccum > self.dumpInterval:
             if self.oreStorage > 0:
-                engine.world.World().addOre(self.oreStorage)
+                world.World().addOre(self.oreStorage)
                 self.oreStorage = 0
             self.timeAccum %= self.dumpInterval
 
     #Scan for enemies and choose a target if found
     def scanForOre(self):
-        candidates = engine.world.World().getOreDeposits()
+        candidates = world.World().getOreDeposits()
 
         for c in candidates:
-            print c.getPos(), self.getDistance(c), self.mineRadius
+            print(c.getPos(), self.getDistance(c), self.mineRadius)
 
         candidates = [x for x in candidates if self.getDistance(x) < self.mineRadius]
         if len(candidates) == 0:

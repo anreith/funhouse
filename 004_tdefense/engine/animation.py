@@ -47,7 +47,7 @@ class Animation(object):
         return Animation(self.data, self.gfx)
 
     def setPos(self, pos):
-        self.pos = map(operator.sub, pos[:], self.offset)
+        self.pos = list(map(operator.sub, pos[:], self.offset))
         
     def nextFrame(self):
         if not self.isDone():

@@ -7,7 +7,7 @@ Created on Apr 10, 2014
 import tower
 import random
 import pygame
-import engine.world
+import world
 
 class LaserTower(tower.Tower):
 
@@ -50,7 +50,7 @@ class LaserTower(tower.Tower):
 
     #Scan for enemies and choose a target if found
     def scanForEnemies(self):
-        candidates = engine.world.World().getEnemies()
+        candidates = world.World().getEnemies()
         candidates = [x for x in candidates if self.getDistance(x) < self.attackRadius]
         if len(candidates) == 0:
             self.target = None
